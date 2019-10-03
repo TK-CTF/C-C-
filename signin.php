@@ -1,6 +1,10 @@
 <?php
 	require_once('config.php');
 	session_start();
+	$token = filter_input(INPUT_POST, 'token');
+	if (empty($_SESSION['token']) || $token !== $_SESSION['token']) {
+		die("connect to my website properly");
+	}
 	// validate POST
 	if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 		echo 'POST is invalid';
@@ -9,6 +13,7 @@
 	// search DB for POSTed email
 	try {
 		$pdo = new PDO(DSN, DB_USER, DB_PASS);
+		// SQL Injection
 		$stmt = $pdo->prepare('SELECT * FROM userData WHERE email = ?');
 		$stmt->execute([$_POST['email']]);
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);

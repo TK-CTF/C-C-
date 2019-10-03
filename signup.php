@@ -1,9 +1,15 @@
 <?php
 	require_once('config.php');
+	session_start();
+	$token = filter_input(INPUT_POST, 'token');
+	if (empty($_SESSION['token']) || $token !== $_SESSION['token']) {
+		die("connect to my website properly");
+	}
 	// connect to DB and create table if not exists
 	try {
 		$pdo = new PDO(DSN, DB_USER, DB_PASS);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		// SQL Injection
 		$pdo->exec("CREATE TABLE IF NOT EXISTS userData(
 		id INT NOT NULL auto_increment PRIMARY KEY,
 		email VARCHAR(255),
@@ -27,6 +33,7 @@
 	}
 	// Sign up
 	try {
+		// SQL Injection
 		$stmt = $pdo->prepare("INSERT INTO userDeta(email, password) VALUE(?, ?)");
 		$stmt->execute([$email, $password]);
 		echo 'Signed up';
